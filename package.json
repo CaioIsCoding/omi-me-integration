@@ -1,0 +1,32 @@
+{
+  "name": "omi-me-integration",
+  "version": "1.0.0",
+  "description": "Omi.me API integration for OpenClaw - MCP server and sync utilities",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "ts-node src/index.ts",
+    "sync": "ts-node scripts/sync.ts"
+  },
+  "keywords": [
+    "omi.me",
+    "openclaw",
+    "mcp",
+    "memories",
+    "action-items",
+    "conversations"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "axios": "^1.6.0",
+    "dotenv": "^16.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "ts-node": "^10.9.0",
+    "typescript": "^5.3.0"
+  }
+}
