@@ -37,11 +37,11 @@ export class ActionItemsResource {
   }
 
   async markActionItemComplete(id: string): Promise<OmiActionItem> {
-    return this.client.updateActionItem(id, { status: 'completed' });
+    return this.client.updateActionItem(id, { status: 'completed' } as any);
   }
 
   async markActionItemPending(id: string): Promise<OmiActionItem> {
-    return this.client.updateActionItem(id, { status: 'pending' });
+    return this.client.updateActionItem(id, { status: 'pending' } as any);
   }
 
   async updateActionItem(

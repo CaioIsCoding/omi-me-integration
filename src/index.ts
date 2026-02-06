@@ -30,7 +30,8 @@ const actionItemsResource = new ActionItemsResource(client);
 const conversationsResource = new ConversationsResource(client);
 
 // Create MCP server
-const server = new Server('omi-me-integration', {
+const server = new Server({
+  name: 'omi-me-integration',
   version: '1.0.0',
 });
 
@@ -143,7 +144,14 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         };
       }
       case 'create-memory': {
-        const result = await memoriesResource.createMemory(args);
+        if (!args || typeof args.content !== 'string') {
+          throw new Error('content is required for create-memory');
+        }
+        const result = await memoriesResource.createMemory({
+          content: args.content,
+          type: args.type as string,
+          metadata: args.metadata as Record<string, unknown>,
+        });
         return {
           content: [
             {
@@ -165,7 +173,15 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         };
       }
       case 'create-action-item': {
-        const result = await actionItemsResource.createActionItem(args);
+        if (!args || typeof args.title !== 'string') {
+          throw new Error('title is required for create-action-item');
+        }
+        const result = await actionItemsResource.createActionItem({
+          title: args.title,
+          description: args.description as string,
+          due_date: args.due_date as string,
+          metadata: args.metadata as Record<string, unknown>,
+        });
         return {
           content: [
             {
@@ -187,7 +203,15 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         };
       }
       case 'create-conversation': {
-        const result = await conversationsResource.createConversation(args);
+        if (!args || !Array.isArray(args.participants)) {
+          throw new Error('participants (array) is required for create-conversation');
+        }
+        const result = await conversationsResource.createConversation({
+          title: args.title as string,
+          participants: args.participants,
+          initial_message: args.initial_message as string,
+          metadata: args.metadata as Record<string, unknown>,
+        });
         return {
           content: [
             {
