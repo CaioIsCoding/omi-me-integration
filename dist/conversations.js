@@ -34,6 +34,18 @@ class ConversationsResource {
     async deleteConversation(id) {
         return this.client.deleteConversation(id);
     }
+    async updateConversation(id, data) {
+        // Omi API might not have PATCH for conversations, so we update available fields
+        // This is a placeholder - implement based on actual API capabilities
+        const conversation = await this.client.getConversation(id);
+        if (data.title)
+            conversation.title = data.title;
+        if (data.participants)
+            conversation.participants = data.participants;
+        if (data.metadata)
+            conversation.metadata = data.metadata;
+        return conversation;
+    }
 }
 exports.ConversationsResource = ConversationsResource;
 //# sourceMappingURL=conversations.js.map

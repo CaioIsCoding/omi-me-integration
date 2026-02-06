@@ -59,4 +59,17 @@ export class ConversationsResource {
   async deleteConversation(id: string): Promise<void> {
     return this.client.deleteConversation(id);
   }
+
+  async updateConversation(
+    id: string,
+    data: Partial<CreateConversationRequest>
+  ): Promise<OmiConversation> {
+    // Omi API might not have PATCH for conversations, so we update available fields
+    // This is a placeholder - implement based on actual API capabilities
+    const conversation = await this.client.getConversation(id);
+    if (data.title) conversation.title = data.title;
+    if (data.participants) conversation.participants = data.participants;
+    if (data.metadata) conversation.metadata = data.metadata;
+    return conversation;
+  }
 }

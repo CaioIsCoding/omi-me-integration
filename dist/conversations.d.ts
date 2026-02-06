@@ -12,5 +12,6 @@ export declare class ConversationsResource {
     addMessageToConversation(request: CreateMessageRequest): Promise<OmiMessage>;
     searchConversations(query: string, params?: ListParams): Promise<OmiConversation[]>;
     deleteConversation(id: string): Promise<void>;
+    updateConversation(id: string, data: Partial<CreateConversationRequest>): Promise<OmiConversation>;
 }
 //# sourceMappingURL=conversations.d.ts.map

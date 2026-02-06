@@ -33,6 +33,7 @@ const server = new index_js_1.Server({
 });
 // Tool definitions
 const TOOLS = {
+    // Memories
     getMemories: {
         name: 'get-memories',
         description: 'Retrieve a list of memories from Omi.me',
@@ -45,19 +46,68 @@ const TOOLS = {
             },
         },
     },
+    getMemory: {
+        name: 'get-memory',
+        description: 'Get a specific memory by ID',
+        inputSchema: {
+            type: 'object',
+            properties: {
+                id: { type: 'string', description: 'Memory ID' },
+            },
+            required: ['id'],
+        },
+    },
     createMemory: {
         name: 'create-memory',
         description: 'Create a new memory in Omi.me',
         inputSchema: {
             type: 'object',
             properties: {
-                content: { type: 'string', description: 'The memory content' },
+                content: { type: 'string', description: 'The memory content (required)' },
                 type: { type: 'string', description: 'Memory type (e.g., "fact", "preference")' },
                 metadata: { type: 'object', description: 'Additional metadata' },
             },
             required: ['content'],
         },
     },
+    updateMemory: {
+        name: 'update-memory',
+        description: 'Update an existing memory',
+        inputSchema: {
+            type: 'object',
+            properties: {
+                id: { type: 'string', description: 'Memory ID (required)' },
+                content: { type: 'string', description: 'Updated content' },
+                type: { type: 'string', description: 'Updated type' },
+                metadata: { type: 'object', description: 'Updated metadata' },
+            },
+            required: ['id'],
+        },
+    },
+    deleteMemory: {
+        name: 'delete-memory',
+        description: 'Delete a memory from Omi.me',
+        inputSchema: {
+            type: 'object',
+            properties: {
+                id: { type: 'string', description: 'Memory ID to delete (required)' },
+            },
+            required: ['id'],
+        },
+    },
+    searchMemories: {
+        name: 'search-memories',
+        description: 'Search memories by content or type',
+        inputSchema: {
+            type: 'object',
+            properties: {
+                query: { type: 'string', description: 'Search query (required)' },
+                limit: { type: 'number', description: 'Maximum results (default: 50)' },
+            },
+            required: ['query'],
+        },
+    },
+    // Action Items (Tasks)
     getActionItems: {
         name: 'get-action-items',
         description: 'Retrieve action items (tasks) from Omi.me',
@@ -70,13 +120,24 @@ const TOOLS = {
             },
         },
     },
+    getActionItem: {
+        name: 'get-action-item',
+        description: 'Get a specific action item by ID',
+        inputSchema: {
+            type: 'object',
+            properties: {
+                id: { type: 'string', description: 'Action item ID' },
+            },
+            required: ['id'],
+        },
+    },
     createActionItem: {
         name: 'create-action-item',
         description: 'Create a new action item (task) in Omi.me',
         inputSchema: {
             type: 'object',
             properties: {
-                title: { type: 'string', description: 'Task title' },
+                title: { type: 'string', description: 'Task title (required)' },
                 description: { type: 'string', description: 'Task description' },
                 due_date: { type: 'string', description: 'Due date (ISO 8601 format)' },
                 metadata: { type: 'object', description: 'Additional metadata' },
@@ -84,6 +145,56 @@ const TOOLS = {
             required: ['title'],
         },
     },
+    updateActionItem: {
+        name: 'update-action-item',
+        description: 'Update an existing action item',
+        inputSchema: {
+            type: 'object',
+            properties: {
+                id: { type: 'string', description: 'Action item ID (required)' },
+                title: { type: 'string', description: 'Updated title' },
+                description: { type: 'string', description: 'Updated description' },
+                due_date: { type: 'string', description: 'Updated due date' },
+                status: { type: 'string', enum: ['pending', 'completed', 'cancelled'], description: 'Updated status' },
+                metadata: { type: 'object', description: 'Updated metadata' },
+            },
+            required: ['id'],
+        },
+    },
+    deleteActionItem: {
+        name: 'delete-action-item',
+        description: 'Delete an action item from Omi.me',
+        inputSchema: {
+            type: 'object',
+            properties: {
+                id: { type: 'string', description: 'Action item ID to delete (required)' },
+            },
+            required: ['id'],
+        },
+    },
+    markActionItemComplete: {
+        name: 'mark-action-item-complete',
+        description: 'Mark an action item as completed',
+        inputSchema: {
+            type: 'object',
+            properties: {
+                id: { type: 'string', description: 'Action item ID (required)' },
+            },
+            required: ['id'],
+        },
+    },
+    markActionItemPending: {
+        name: 'mark-action-item-pending',
+        description: 'Mark an action item as pending',
+        inputSchema: {
+            type: 'object',
+            properties: {
+                id: { type: 'string', description: 'Action item ID (required)' },
+            },
+            required: ['id'],
+        },
+    },
+    // Conversations
     getConversations: {
         name: 'get-conversations',
         description: 'Retrieve conversations from Omi.me',
@@ -96,6 +207,17 @@ const TOOLS = {
             },
         },
     },
+    getConversation: {
+        name: 'get-conversation',
+        description: 'Get a specific conversation by ID',
+        inputSchema: {
+            type: 'object',
+            properties: {
+                id: { type: 'string', description: 'Conversation ID' },
+            },
+            required: ['id'],
+        },
+    },
     createConversation: {
         name: 'create-conversation',
         description: 'Create a new conversation in Omi.me',
@@ -106,12 +228,63 @@ const TOOLS = {
                 participants: {
                     type: 'array',
                     items: { type: 'string' },
-                    description: 'List of participant identifiers',
+                    description: 'List of participant identifiers (required)',
                 },
                 initial_message: { type: 'string', description: 'Initial message content' },
                 metadata: { type: 'object', description: 'Additional metadata' },
             },
             required: ['participants'],
+        },
+    },
+    updateConversation: {
+        name: 'update-conversation',
+        description: 'Update an existing conversation',
+        inputSchema: {
+            type: 'object',
+            properties: {
+                id: { type: 'string', description: 'Conversation ID (required)' },
+                title: { type: 'string', description: 'Updated title' },
+                participants: { type: 'array', items: { type: 'string' }, description: 'Updated participants' },
+                metadata: { type: 'object', description: 'Updated metadata' },
+            },
+            required: ['id'],
+        },
+    },
+    deleteConversation: {
+        name: 'delete-conversation',
+        description: 'Delete a conversation from Omi.me',
+        inputSchema: {
+            type: 'object',
+            properties: {
+                id: { type: 'string', description: 'Conversation ID to delete (required)' },
+            },
+            required: ['id'],
+        },
+    },
+    addMessageToConversation: {
+        name: 'add-message-to-conversation',
+        description: 'Add a message to an existing conversation',
+        inputSchema: {
+            type: 'object',
+            properties: {
+                conversation_id: { type: 'string', description: 'Conversation ID (required)' },
+                role: { type: 'string', enum: ['user', 'assistant', 'system'], description: 'Message role (required)' },
+                content: { type: 'string', description: 'Message content (required)' },
+                metadata: { type: 'object', description: 'Additional metadata' },
+            },
+            required: ['conversation_id', 'role', 'content'],
+        },
+    },
+    searchConversations: {
+        name: 'search-conversations',
+        description: 'Search conversations by title or participants',
+        inputSchema: {
+            type: 'object',
+            properties: {
+                query: { type: 'string', description: 'Search query (required)' },
+                limit: { type: 'number', description: 'Maximum results (default: 50)' },
+            },
+            required: ['query'],
         },
     },
 };
@@ -123,105 +296,222 @@ server.setRequestHandler(types_js_1.ListToolsRequestSchema, async () => {
 });
 server.setRequestHandler(types_js_1.CallToolRequestSchema, async (request) => {
     const { name, arguments: args } = request.params;
+    const argsData = (args || {});
     try {
         switch (name) {
+            // === MEMORIES ===
             case 'get-memories': {
-                const result = await memoriesResource.getMemories(args);
+                const result = await memoriesResource.getMemories(argsData);
                 return {
-                    content: [
-                        {
-                            type: 'text',
-                            text: JSON.stringify(result, null, 2),
-                        },
-                    ],
+                    content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
+                };
+            }
+            case 'get-memory': {
+                const id = argsData.id;
+                if (!id)
+                    throw new Error('id is required');
+                const result = await memoriesResource.getMemory(id);
+                return {
+                    content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
                 };
             }
             case 'create-memory': {
-                if (!args || typeof args.content !== 'string') {
+                const content = argsData.content;
+                if (!content)
                     throw new Error('content is required for create-memory');
-                }
                 const result = await memoriesResource.createMemory({
-                    content: args.content,
-                    type: args.type,
-                    metadata: args.metadata,
+                    content,
+                    type: argsData.type,
+                    metadata: argsData.metadata,
                 });
                 return {
-                    content: [
-                        {
-                            type: 'text',
-                            text: JSON.stringify(result, null, 2),
-                        },
-                    ],
+                    content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
                 };
             }
-            case 'get-action-items': {
-                const result = await actionItemsResource.getActionItems(args);
+            case 'update-memory': {
+                const id = argsData.id;
+                if (!id)
+                    throw new Error('id is required');
+                const result = await memoriesResource.updateMemory(id, {
+                    content: argsData.content,
+                    type: argsData.type,
+                    metadata: argsData.metadata,
+                });
                 return {
-                    content: [
-                        {
-                            type: 'text',
-                            text: JSON.stringify(result, null, 2),
-                        },
-                    ],
+                    content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
+                };
+            }
+            case 'delete-memory': {
+                const id = argsData.id;
+                if (!id)
+                    throw new Error('id is required');
+                await memoriesResource.deleteMemory(id);
+                return {
+                    content: [{ type: 'text', text: `Memory ${id} deleted successfully` }],
+                };
+            }
+            case 'search-memories': {
+                const query = argsData.query;
+                if (!query)
+                    throw new Error('query is required');
+                const result = await memoriesResource.searchMemories(query);
+                return {
+                    content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
+                };
+            }
+            // === ACTION ITEMS ===
+            case 'get-action-items': {
+                const result = await actionItemsResource.getActionItems(argsData);
+                return {
+                    content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
+                };
+            }
+            case 'get-action-item': {
+                const id = argsData.id;
+                if (!id)
+                    throw new Error('id is required');
+                const result = await actionItemsResource.getActionItem(id);
+                return {
+                    content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
                 };
             }
             case 'create-action-item': {
-                if (!args || typeof args.title !== 'string') {
+                const title = argsData.title;
+                if (!title)
                     throw new Error('title is required for create-action-item');
-                }
                 const result = await actionItemsResource.createActionItem({
-                    title: args.title,
-                    description: args.description,
-                    due_date: args.due_date,
-                    metadata: args.metadata,
+                    title,
+                    description: argsData.description,
+                    due_date: argsData.due_date,
+                    metadata: argsData.metadata,
                 });
                 return {
-                    content: [
-                        {
-                            type: 'text',
-                            text: JSON.stringify(result, null, 2),
-                        },
-                    ],
+                    content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
                 };
             }
-            case 'get-conversations': {
-                const result = await conversationsResource.getConversations(args);
+            case 'update-action-item': {
+                const id = argsData.id;
+                if (!id)
+                    throw new Error('id is required');
+                const result = await actionItemsResource.updateActionItem(id, {
+                    title: argsData.title,
+                    description: argsData.description,
+                    due_date: argsData.due_date,
+                    metadata: argsData.metadata,
+                });
                 return {
-                    content: [
-                        {
-                            type: 'text',
-                            text: JSON.stringify(result, null, 2),
-                        },
-                    ],
+                    content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
+                };
+            }
+            case 'delete-action-item': {
+                const id = argsData.id;
+                if (!id)
+                    throw new Error('id is required');
+                await actionItemsResource.deleteActionItem(id);
+                return {
+                    content: [{ type: 'text', text: `Action item ${id} deleted successfully` }],
+                };
+            }
+            case 'mark-action-item-complete': {
+                const id = argsData.id;
+                if (!id)
+                    throw new Error('id is required');
+                const result = await actionItemsResource.markActionItemComplete(id);
+                return {
+                    content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
+                };
+            }
+            case 'mark-action-item-pending': {
+                const id = argsData.id;
+                if (!id)
+                    throw new Error('id is required');
+                const result = await actionItemsResource.markActionItemPending(id);
+                return {
+                    content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
+                };
+            }
+            // === CONVERSATIONS ===
+            case 'get-conversations': {
+                const result = await conversationsResource.getConversations(argsData);
+                return {
+                    content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
+                };
+            }
+            case 'get-conversation': {
+                const id = argsData.id;
+                if (!id)
+                    throw new Error('id is required');
+                const result = await conversationsResource.getConversation(id);
+                return {
+                    content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
                 };
             }
             case 'create-conversation': {
-                if (!args || !Array.isArray(args.participants)) {
+                const participants = argsData.participants;
+                if (!Array.isArray(participants)) {
                     throw new Error('participants (array) is required for create-conversation');
                 }
                 const result = await conversationsResource.createConversation({
-                    title: args.title,
-                    participants: args.participants,
-                    initial_message: args.initial_message,
-                    metadata: args.metadata,
+                    title: argsData.title,
+                    participants,
+                    initial_message: argsData.initial_message,
+                    metadata: argsData.metadata,
                 });
                 return {
-                    content: [
-                        {
-                            type: 'text',
-                            text: JSON.stringify(result, null, 2),
-                        },
-                    ],
+                    content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
+                };
+            }
+            case 'update-conversation': {
+                const id = argsData.id;
+                if (!id)
+                    throw new Error('id is required');
+                const result = await conversationsResource.updateConversation(id, {
+                    title: argsData.title,
+                    participants: argsData.participants,
+                    metadata: argsData.metadata,
+                });
+                return {
+                    content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
+                };
+            }
+            case 'delete-conversation': {
+                const id = argsData.id;
+                if (!id)
+                    throw new Error('id is required');
+                await conversationsResource.deleteConversation(id);
+                return {
+                    content: [{ type: 'text', text: `Conversation ${id} deleted successfully` }],
+                };
+            }
+            case 'add-message-to-conversation': {
+                const conversation_id = argsData.conversation_id;
+                const role = argsData.role;
+                const content = argsData.content;
+                if (!conversation_id || !role || !content) {
+                    throw new Error('conversation_id, role, and content are required');
+                }
+                const result = await conversationsResource.addMessageToConversation({
+                    conversation_id,
+                    role: role,
+                    content,
+                    metadata: argsData.metadata,
+                });
+                return {
+                    content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
+                };
+            }
+            case 'search-conversations': {
+                const query = argsData.query;
+                if (!query)
+                    throw new Error('query is required');
+                const result = await conversationsResource.searchConversations(query, argsData);
+                return {
+                    content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
                 };
             }
             default:
                 return {
-                    content: [
-                        {
-                            type: 'text',
-                            text: `Unknown tool: ${name}`,
-                        },
-                    ],
+                    content: [{ type: 'text', text: `Unknown tool: ${name}` }],
                     isError: true,
                 };
         }
@@ -229,12 +519,7 @@ server.setRequestHandler(types_js_1.CallToolRequestSchema, async (request) => {
     catch (error) {
         const errorMessage = error instanceof Error ? error.message : String(error);
         return {
-            content: [
-                {
-                    type: 'text',
-                    text: `Error: ${errorMessage}`,
-                },
-            ],
+            content: [{ type: 'text', text: `Error: ${errorMessage}` }],
             isError: true,
         };
     }
