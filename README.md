@@ -39,7 +39,7 @@ omi-me-integration/
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/talktocaio/omi-me-integration.git
+   git clone https://github.com/CaioIsCoding/omi-me-integration.git
    cd omi-me-integration
    ```
 
