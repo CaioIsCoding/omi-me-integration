@@ -67,59 +67,63 @@ class OmiClient {
     }
     // Memories
     async getMemories(params) {
-        const response = await this.client.get('/memories', { params });
-        return response.data;
+        const response = await this.client.get('/user/memories', { params });
+        // API returns array directly, not wrapped
+        const data = Array.isArray(response.data) ? response.data : response.data.data || [];
+        return { data, total: data.length };
     }
     async getMemory(id) {
-        const response = await this.client.get(`/memories/${id}`);
+        const response = await this.client.get(`/user/memories/${id}`);
         return response.data;
     }
     async createMemory(data) {
-        const response = await this.client.post('/memories', data);
+        const response = await this.client.post('/user/memories', data);
         return response.data;
     }
     async updateMemory(id, data) {
-        const response = await this.client.patch(`/memories/${id}`, data);
+        const response = await this.client.patch(`/user/memories/${id}`, data);
         return response.data;
     }
     async deleteMemory(id) {
-        await this.client.delete(`/memories/${id}`);
+        await this.client.delete(`/user/memories/${id}`);
     }
     // Action Items
     async getActionItems(params) {
-        const response = await this.client.get('/action-items', { params });
-        return response.data;
+        const response = await this.client.get('/user/action-items', { params });
+        const data = Array.isArray(response.data) ? response.data : response.data.data || [];
+        return { data, total: data.length };
     }
     async getActionItem(id) {
-        const response = await this.client.get(`/action-items/${id}`);
+        const response = await this.client.get(`/user/action-items/${id}`);
         return response.data;
     }
     async createActionItem(data) {
-        const response = await this.client.post('/action-items', data);
+        const response = await this.client.post('/user/action-items', data);
         return response.data;
     }
     async updateActionItem(id, data) {
-        const response = await this.client.patch(`/action-items/${id}`, data);
+        const response = await this.client.patch(`/user/action-items/${id}`, data);
         return response.data;
     }
     async deleteActionItem(id) {
-        await this.client.delete(`/action-items/${id}`);
+        await this.client.delete(`/user/action-items/${id}`);
     }
     // Conversations
     async getConversations(params) {
-        const response = await this.client.get('/conversations', { params });
-        return response.data;
+        const response = await this.client.get('/user/conversations', { params });
+        const data = Array.isArray(response.data) ? response.data : response.data.data || [];
+        return { data, total: data.length };
     }
     async getConversation(id) {
-        const response = await this.client.get(`/conversations/${id}`);
+        const response = await this.client.get(`/user/conversations/${id}`);
         return response.data;
     }
     async createConversation(data) {
-        const response = await this.client.post('/conversations', data);
+        const response = await this.client.post('/user/conversations', data);
         return response.data;
     }
     async deleteConversation(id) {
-        await this.client.delete(`/conversations/${id}`);
+        await this.client.delete(`/user/conversations/${id}`);
     }
     // Messages
     async createMessage(data) {
